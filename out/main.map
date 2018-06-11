@@ -1,4 +1,10 @@
 
+Allocating common symbols
+Common symbol       size              file
+
+pi2c_data           0x4               .\out\i2c.o
+i2c_eeprom_data     0x20              .\out\i2c_eeprom.o
+
 Memory Configuration
 
 Name             Origin             Length             Attributes
@@ -11,11 +17,14 @@ Linker script and memory map
 LOAD .\out\init.o
 LOAD .\out\led.o
 LOAD .\out\uart.o
+LOAD .\out\systick.o
+LOAD .\out\i2c.o
+LOAD .\out\i2c_eeprom.o
 LOAD .\out\main.o
 LOAD C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-eabi\5.4.1\armv6-m\libgcc.a
                 0x00000000                . = ORIGIN (flash)
 
-.text           0x00000000      0x4c4
+.text           0x00000000      0xdb8
  *(.vectors)
  .vectors       0x00000000       0xc0 .\out\init.o
                 0x00000000                Vectors
@@ -38,68 +47,106 @@ LOAD C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-e
                 0x0000032c                uartPuts
                 0x00000370                uartPutHex
                 0x000003e0                uartPutDec
- .text          0x00000470       0x54 .\out\main.o
-                0x00000470                main
+ .text          0x00000470       0x7c .\out\systick.o
+                0x00000470                SysTick_Handler
+                0x00000488                SysTickCfg
+                0x000004c0                delay_ms
+ .text          0x000004ec      0x53c .\out\i2c.o
+                0x000004ec                i2cConfig
+                0x000004fc                i2cConfig_Init
+                0x000006d8                i2cStart
+                0x00000704                i2cStop
+                0x00000754                I2C_IRQHandler
+ .text          0x00000a28      0x2c4 .\out\i2c_eeprom.o
+                0x00000a28                i2c_eeprom_current_read
+                0x00000a60                i2c_eeprom_sequential_read
+                0x00000ac4                i2c_eeprom_write_address
+                0x00000af4                i2c_eeprom_random_read
+                0x00000b30                i2c_eeprom_byte_write
+                0x00000b70                i2c_eeprom_page_write
+                0x00000bc0                i2c_eeprom_ack_polling
+                0x00000bf0                i2c_eeprom_common_write
+ .text          0x00000cec       0xcc .\out\main.o
+                0x00000cec                main
 
-.glue_7         0x000004c4        0x0
- .glue_7        0x000004c4        0x0 linker stubs
+.glue_7         0x00000db8        0x0
+ .glue_7        0x00000db8        0x0 linker stubs
 
-.glue_7t        0x000004c4        0x0
- .glue_7t       0x000004c4        0x0 linker stubs
+.glue_7t        0x00000db8        0x0
+ .glue_7t       0x00000db8        0x0 linker stubs
 
-.vfp11_veneer   0x000004c4        0x0
- .vfp11_veneer  0x000004c4        0x0 linker stubs
+.vfp11_veneer   0x00000db8        0x0
+ .vfp11_veneer  0x00000db8        0x0 linker stubs
 
-.v4_bx          0x000004c4        0x0
- .v4_bx         0x000004c4        0x0 linker stubs
+.v4_bx          0x00000db8        0x0
+ .v4_bx         0x00000db8        0x0 linker stubs
 
-.iplt           0x000004c4        0x0
- .iplt          0x000004c4        0x0 .\out\init.o
+.iplt           0x00000db8        0x0
+ .iplt          0x00000db8        0x0 .\out\init.o
 
-.rel.dyn        0x000004c4        0x0
- .rel.iplt      0x000004c4        0x0 .\out\init.o
+.rel.dyn        0x00000db8        0x0
+ .rel.iplt      0x00000db8        0x0 .\out\init.o
 
-.rodata         0x000004c4       0x39
- .rodata        0x000004c4       0x28 .\out\uart.o
- .rodata        0x000004ec       0x11 .\out\main.o
+.rodata         0x00000db8      0x1a6
+ .rodata        0x00000db8       0x28 .\out\uart.o
+ .rodata        0x00000de0      0x164 .\out\i2c.o
+ .rodata        0x00000f44       0x1a .\out\main.o
                 0x10000000                . = ORIGIN (ram)
 
-.data           0x10000000        0x0 load address 0x000004fd
-                0x000004fd                INIT_DATA_VALUES = LOADADDR (.data)
+.data           0x10000000        0x4 load address 0x00000f5e
+                0x00000f5e                INIT_DATA_VALUES = LOADADDR (.data)
                 0x10000000                INIT_DATA_START = .
  *(.data)
  .data          0x10000000        0x0 .\out\init.o
  .data          0x10000000        0x0 .\out\led.o
  .data          0x10000000        0x0 .\out\uart.o
- .data          0x10000000        0x0 .\out\main.o
-                0x10000000                INIT_DATA_END = .
-                0x10000000                BSS_START = .
+ .data          0x10000000        0x0 .\out\systick.o
+ .data          0x10000000        0x0 .\out\i2c.o
+ .data          0x10000000        0x4 .\out\i2c_eeprom.o
+                0x10000000                ADDRESS_SIZE
+ .data          0x10000004        0x0 .\out\main.o
+                0x10000004                INIT_DATA_END = .
+                0x10000004                BSS_START = .
 
-.igot.plt       0x10000000        0x0 load address 0x000004fd
- .igot.plt      0x10000000        0x0 .\out\init.o
+.igot.plt       0x10000004        0x0 load address 0x00000f62
+ .igot.plt      0x10000004        0x0 .\out\init.o
 
-.bss            0x10000000        0x0 load address 0x000004fd
+.bss            0x10000004       0x28 load address 0x00000f62
  *(.bss)
- .bss           0x10000000        0x0 .\out\init.o
- .bss           0x10000000        0x0 .\out\led.o
- .bss           0x10000000        0x0 .\out\uart.o
- .bss           0x10000000        0x0 .\out\main.o
-                0x10000000                BSS_END = .
+ .bss           0x10000004        0x0 .\out\init.o
+ .bss           0x10000004        0x0 .\out\led.o
+ .bss           0x10000004        0x0 .\out\uart.o
+ .bss           0x10000004        0x4 .\out\systick.o
+                0x10000004                TickCount
+ .bss           0x10000008        0x0 .\out\i2c.o
+ .bss           0x10000008        0x0 .\out\i2c_eeprom.o
+ .bss           0x10000008        0x0 .\out\main.o
+ COMMON         0x10000008        0x4 .\out\i2c.o
+                0x10000008                pi2c_data
+ COMMON         0x1000000c       0x20 .\out\i2c_eeprom.o
+                0x1000000c                i2c_eeprom_data
+                0x1000002c                BSS_END = .
 OUTPUT(.\out\main.elf elf32-littlearm)
 
-.debug_info     0x00000000      0x3a8
+.debug_info     0x00000000      0xd5f
  .debug_info    0x00000000      0x113 .\out\init.o
  .debug_info    0x00000113       0x59 .\out\led.o
  .debug_info    0x0000016c      0x1ae .\out\uart.o
- .debug_info    0x0000031a       0x8e .\out\main.o
+ .debug_info    0x0000031a       0xa4 .\out\systick.o
+ .debug_info    0x000003be      0x49b .\out\i2c.o
+ .debug_info    0x00000859      0x414 .\out\i2c_eeprom.o
+ .debug_info    0x00000c6d       0xf2 .\out\main.o
 
-.debug_abbrev   0x00000000      0x266
+.debug_abbrev   0x00000000      0x594
  .debug_abbrev  0x00000000       0xdf .\out\init.o
  .debug_abbrev  0x000000df       0x2c .\out\led.o
  .debug_abbrev  0x0000010b      0x10a .\out\uart.o
- .debug_abbrev  0x00000215       0x51 .\out\main.o
+ .debug_abbrev  0x00000215       0x8d .\out\systick.o
+ .debug_abbrev  0x000002a2      0x18e .\out\i2c.o
+ .debug_abbrev  0x00000430       0xcf .\out\i2c_eeprom.o
+ .debug_abbrev  0x000004ff       0x95 .\out\main.o
 
-.debug_aranges  0x00000000       0x80
+.debug_aranges  0x00000000       0xe0
  .debug_aranges
                 0x00000000       0x20 .\out\init.o
  .debug_aranges
@@ -107,29 +154,47 @@ OUTPUT(.\out\main.elf elf32-littlearm)
  .debug_aranges
                 0x00000040       0x20 .\out\uart.o
  .debug_aranges
-                0x00000060       0x20 .\out\main.o
+                0x00000060       0x20 .\out\systick.o
+ .debug_aranges
+                0x00000080       0x20 .\out\i2c.o
+ .debug_aranges
+                0x000000a0       0x20 .\out\i2c_eeprom.o
+ .debug_aranges
+                0x000000c0       0x20 .\out\main.o
 
-.debug_line     0x00000000      0x1a0
+.debug_line     0x00000000      0x5fa
  .debug_line    0x00000000       0x56 .\out\init.o
  .debug_line    0x00000056       0x47 .\out\led.o
  .debug_line    0x0000009d       0xb6 .\out\uart.o
- .debug_line    0x00000153       0x4d .\out\main.o
+ .debug_line    0x00000153       0x4e .\out\systick.o
+ .debug_line    0x000001a1      0x1bb .\out\i2c.o
+ .debug_line    0x0000035c      0x164 .\out\i2c_eeprom.o
+ .debug_line    0x000004c0      0x13a .\out\main.o
 
-.debug_str      0x00000000      0x246
+.debug_str      0x00000000      0x795
  .debug_str     0x00000000      0x130 .\out\init.o
                                 0x142 (size before relaxing)
  .debug_str     0x00000130       0x23 .\out\led.o
                                  0xc6 (size before relaxing)
  .debug_str     0x00000153       0xb8 .\out\uart.o
                                 0x17f (size before relaxing)
- .debug_str     0x0000020b       0x3b .\out\main.o
-                                0x133 (size before relaxing)
+ .debug_str     0x0000020b       0x53 .\out\systick.o
+                                 0xf6 (size before relaxing)
+ .debug_str     0x0000025e      0x3c1 .\out\i2c.o
+                                0x50a (size before relaxing)
+ .debug_str     0x0000061f      0x16a .\out\i2c_eeprom.o
+                                0x3ba (size before relaxing)
+ .debug_str     0x00000789        0xc .\out\main.o
+                                0x15a (size before relaxing)
 
 .comment        0x00000000       0x6e
  .comment       0x00000000       0x6e .\out\init.o
                                  0x6f (size before relaxing)
  .comment       0x0000006e       0x6f .\out\led.o
  .comment       0x0000006e       0x6f .\out\uart.o
+ .comment       0x0000006e       0x6f .\out\systick.o
+ .comment       0x0000006e       0x6f .\out\i2c.o
+ .comment       0x0000006e       0x6f .\out\i2c_eeprom.o
  .comment       0x0000006e       0x6f .\out\main.o
 
 .ARM.attributes
@@ -141,35 +206,71 @@ OUTPUT(.\out\main.elf elf32-littlearm)
  .ARM.attributes
                 0x00000062       0x31 .\out\uart.o
  .ARM.attributes
-                0x00000093       0x31 .\out\main.o
+                0x00000093       0x31 .\out\systick.o
+ .ARM.attributes
+                0x000000c4       0x31 .\out\i2c.o
+ .ARM.attributes
+                0x000000f5       0x31 .\out\i2c_eeprom.o
+ .ARM.attributes
+                0x00000126       0x31 .\out\main.o
 
-.debug_frame    0x00000000      0x218
+.debug_frame    0x00000000      0x440
  .debug_frame   0x00000000       0x84 .\out\init.o
  .debug_frame   0x00000084       0x64 .\out\led.o
  .debug_frame   0x000000e8      0x100 .\out\uart.o
- .debug_frame   0x000001e8       0x30 .\out\main.o
+ .debug_frame   0x000001e8       0x6c .\out\systick.o
+ .debug_frame   0x00000254       0xac .\out\i2c.o
+ .debug_frame   0x00000300      0x110 .\out\i2c_eeprom.o
+ .debug_frame   0x00000410       0x30 .\out\main.o
 
 Cross Reference Table
 
 Symbol                                            File
+ADDRESS_SIZE                                      .\out\i2c_eeprom.o
 BSS_END                                           .\out\init.o
 BSS_START                                         .\out\init.o
 Default_Handler                                   .\out\init.o
+I2C_IRQHandler                                    .\out\i2c.o
+                                                  .\out\init.o
 INIT_DATA_END                                     .\out\init.o
 INIT_DATA_START                                   .\out\init.o
 INIT_DATA_VALUES                                  .\out\init.o
-SysTick_Handler                                   .\out\init.o
+SysTickCfg                                        .\out\systick.o
+                                                  .\out\main.o
+SysTick_Handler                                   .\out\systick.o
+                                                  .\out\init.o
+TickCount                                         .\out\systick.o
 Vectors                                           .\out\init.o
 clock_init                                        .\out\init.o
+delay_ms                                          .\out\systick.o
+                                                  .\out\main.o
+i2cConfig                                         .\out\i2c.o
+                                                  .\out\main.o
+i2cConfig_Init                                    .\out\i2c.o
+i2cStart                                          .\out\i2c.o
+                                                  .\out\i2c_eeprom.o
+i2cStop                                           .\out\i2c.o
+i2c_eeprom_ack_polling                            .\out\i2c_eeprom.o
+                                                  .\out\main.o
+i2c_eeprom_byte_write                             .\out\i2c_eeprom.o
+                                                  .\out\main.o
+i2c_eeprom_common_write                           .\out\i2c_eeprom.o
+i2c_eeprom_current_read                           .\out\i2c_eeprom.o
+i2c_eeprom_data                                   .\out\i2c_eeprom.o
+i2c_eeprom_page_write                             .\out\i2c_eeprom.o
+i2c_eeprom_random_read                            .\out\i2c_eeprom.o
+i2c_eeprom_sequential_read                        .\out\i2c_eeprom.o
+                                                  .\out\main.o
+i2c_eeprom_write_address                          .\out\i2c_eeprom.o
+                                                  .\out\main.o
 init                                              .\out\init.o
 ledCfg                                            .\out\led.o
                                                   .\out\main.o
 ledOff                                            .\out\led.o
-                                                  .\out\main.o
 ledOn                                             .\out\led.o
-                                                  .\out\main.o
 main                                              .\out\main.o
                                                   .\out\init.o
+pi2c_data                                         .\out\i2c.o
 start                                             .\out\init.o
 uartCfg                                           .\out\uart.o
                                                   .\out\main.o
@@ -177,7 +278,9 @@ uartGetRxData                                     .\out\uart.o
 uartGetRxDataAvail                                .\out\uart.o
 uartGetc                                          .\out\uart.o
 uartPutDec                                        .\out\uart.o
+                                                  .\out\main.o
 uartPutHex                                        .\out\uart.o
+                                                  .\out\main.o
 uartPutc                                          .\out\uart.o
 uartPuts                                          .\out\uart.o
                                                   .\out\main.o

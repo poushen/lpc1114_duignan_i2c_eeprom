@@ -8,6 +8,7 @@ extern int main(void);
 void Default_Handler(void);
 
 extern void SysTick_Handler() __attribute__((weak));
+extern void I2C_IRQHandler(void) __attribute__((weak));
 
 // The following are 'declared' in the linker script
 extern unsigned char  INIT_DATA_VALUES;
@@ -16,10 +17,10 @@ extern unsigned char  INIT_DATA_END;
 extern unsigned char  BSS_START;
 extern unsigned char  BSS_END;
 extern void isr_spi1(void);
-// the section "vectors" is placed at the beginning of flash 
+// the section "vectors" is placed at the beginning of flash
 // by the linker script
 const void * Vectors[] __attribute__((section(".vectors"))) ={
-	(void *)0x10002000, 	/* Top of stack */ 
+	(void *)0x10002000, 	/* Top of stack */
 	init,   		/* Reset Handler */
 	Default_Handler,	/* NMI */
 	Default_Handler,	/* Hard Fault */
@@ -34,7 +35,7 @@ const void * Vectors[] __attribute__((section(".vectors"))) ={
 	0,                   	/* Reserved */
 	0,                   	/* Reserved */
 	Default_Handler,     	/* PendSV */
-	SysTick_Handler,     	/* SysTick */		
+	SysTick_Handler,     	/* SysTick */
 /* External interrupt handlers follow */
 	Default_Handler, 	/* PIO0_0 */
 	Default_Handler, 	/* PIO0_1 */
@@ -51,7 +52,7 @@ const void * Vectors[] __attribute__((section(".vectors"))) ={
 	Default_Handler,	/* PIO1_0 */
 	Default_Handler ,  	/* C_CAN */
 	Default_Handler, 	/* SSP1 */
-	Default_Handler, 	/* I2C */
+	I2C_IRQHandler, 	/* I2C */
 	Default_Handler, 	/* CT16B0 */
 	Default_Handler, 	/* CT16B1 */
 	Default_Handler, 	/* CT32B0 */
@@ -79,7 +80,7 @@ void clock_init()
 	SYSPLLCTRL = (3 << 0) | (1 << 5); // set divisors/multipliers
 	PDRUNCFG &= ~BIT7; // Power up the PLL.
 	SYSPLLCLKUEN = 1; // inform PLL of update
-	
+
 	MAINCLKSEL = 3; // Use PLL as main clock
 	MAINCLKUEN = 1; // Inform core of clock update
 }
