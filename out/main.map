@@ -1,0 +1,183 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+flash            0x00000000         0x00008000
+ram              0x10000000         0x00002000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD .\out\init.o
+LOAD .\out\led.o
+LOAD .\out\uart.o
+LOAD .\out\main.o
+LOAD C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-eabi\5.4.1\armv6-m\libgcc.a
+                0x00000000                . = ORIGIN (flash)
+
+.text           0x00000000      0x4c4
+ *(.vectors)
+ .vectors       0x00000000       0xc0 .\out\init.o
+                0x00000000                Vectors
+ *(.text)
+ .text          0x000000c0       0xdc .\out\init.o
+                0x000000c0                start
+                0x000000d0                clock_init
+                0x0000011c                init
+                0x00000194                Default_Handler
+ .text          0x0000019c       0x64 .\out\led.o
+                0x0000019c                ledCfg
+                0x000001d8                ledOn
+                0x000001ec                ledOff
+ .text          0x00000200      0x270 .\out\uart.o
+                0x00000200                uartCfg
+                0x00000278                uartGetRxData
+                0x0000028c                uartGetRxDataAvail
+                0x000002a4                uartPutc
+                0x0000030c                uartGetc
+                0x0000032c                uartPuts
+                0x00000370                uartPutHex
+                0x000003e0                uartPutDec
+ .text          0x00000470       0x54 .\out\main.o
+                0x00000470                main
+
+.glue_7         0x000004c4        0x0
+ .glue_7        0x000004c4        0x0 linker stubs
+
+.glue_7t        0x000004c4        0x0
+ .glue_7t       0x000004c4        0x0 linker stubs
+
+.vfp11_veneer   0x000004c4        0x0
+ .vfp11_veneer  0x000004c4        0x0 linker stubs
+
+.v4_bx          0x000004c4        0x0
+ .v4_bx         0x000004c4        0x0 linker stubs
+
+.iplt           0x000004c4        0x0
+ .iplt          0x000004c4        0x0 .\out\init.o
+
+.rel.dyn        0x000004c4        0x0
+ .rel.iplt      0x000004c4        0x0 .\out\init.o
+
+.rodata         0x000004c4       0x39
+ .rodata        0x000004c4       0x28 .\out\uart.o
+ .rodata        0x000004ec       0x11 .\out\main.o
+                0x10000000                . = ORIGIN (ram)
+
+.data           0x10000000        0x0 load address 0x000004fd
+                0x000004fd                INIT_DATA_VALUES = LOADADDR (.data)
+                0x10000000                INIT_DATA_START = .
+ *(.data)
+ .data          0x10000000        0x0 .\out\init.o
+ .data          0x10000000        0x0 .\out\led.o
+ .data          0x10000000        0x0 .\out\uart.o
+ .data          0x10000000        0x0 .\out\main.o
+                0x10000000                INIT_DATA_END = .
+                0x10000000                BSS_START = .
+
+.igot.plt       0x10000000        0x0 load address 0x000004fd
+ .igot.plt      0x10000000        0x0 .\out\init.o
+
+.bss            0x10000000        0x0 load address 0x000004fd
+ *(.bss)
+ .bss           0x10000000        0x0 .\out\init.o
+ .bss           0x10000000        0x0 .\out\led.o
+ .bss           0x10000000        0x0 .\out\uart.o
+ .bss           0x10000000        0x0 .\out\main.o
+                0x10000000                BSS_END = .
+OUTPUT(.\out\main.elf elf32-littlearm)
+
+.debug_info     0x00000000      0x3a8
+ .debug_info    0x00000000      0x113 .\out\init.o
+ .debug_info    0x00000113       0x59 .\out\led.o
+ .debug_info    0x0000016c      0x1ae .\out\uart.o
+ .debug_info    0x0000031a       0x8e .\out\main.o
+
+.debug_abbrev   0x00000000      0x266
+ .debug_abbrev  0x00000000       0xdf .\out\init.o
+ .debug_abbrev  0x000000df       0x2c .\out\led.o
+ .debug_abbrev  0x0000010b      0x10a .\out\uart.o
+ .debug_abbrev  0x00000215       0x51 .\out\main.o
+
+.debug_aranges  0x00000000       0x80
+ .debug_aranges
+                0x00000000       0x20 .\out\init.o
+ .debug_aranges
+                0x00000020       0x20 .\out\led.o
+ .debug_aranges
+                0x00000040       0x20 .\out\uart.o
+ .debug_aranges
+                0x00000060       0x20 .\out\main.o
+
+.debug_line     0x00000000      0x1a0
+ .debug_line    0x00000000       0x56 .\out\init.o
+ .debug_line    0x00000056       0x47 .\out\led.o
+ .debug_line    0x0000009d       0xb6 .\out\uart.o
+ .debug_line    0x00000153       0x4d .\out\main.o
+
+.debug_str      0x00000000      0x246
+ .debug_str     0x00000000      0x130 .\out\init.o
+                                0x142 (size before relaxing)
+ .debug_str     0x00000130       0x23 .\out\led.o
+                                 0xc6 (size before relaxing)
+ .debug_str     0x00000153       0xb8 .\out\uart.o
+                                0x17f (size before relaxing)
+ .debug_str     0x0000020b       0x3b .\out\main.o
+                                0x133 (size before relaxing)
+
+.comment        0x00000000       0x6e
+ .comment       0x00000000       0x6e .\out\init.o
+                                 0x6f (size before relaxing)
+ .comment       0x0000006e       0x6f .\out\led.o
+ .comment       0x0000006e       0x6f .\out\uart.o
+ .comment       0x0000006e       0x6f .\out\main.o
+
+.ARM.attributes
+                0x00000000       0x31
+ .ARM.attributes
+                0x00000000       0x31 .\out\init.o
+ .ARM.attributes
+                0x00000031       0x31 .\out\led.o
+ .ARM.attributes
+                0x00000062       0x31 .\out\uart.o
+ .ARM.attributes
+                0x00000093       0x31 .\out\main.o
+
+.debug_frame    0x00000000      0x218
+ .debug_frame   0x00000000       0x84 .\out\init.o
+ .debug_frame   0x00000084       0x64 .\out\led.o
+ .debug_frame   0x000000e8      0x100 .\out\uart.o
+ .debug_frame   0x000001e8       0x30 .\out\main.o
+
+Cross Reference Table
+
+Symbol                                            File
+BSS_END                                           .\out\init.o
+BSS_START                                         .\out\init.o
+Default_Handler                                   .\out\init.o
+INIT_DATA_END                                     .\out\init.o
+INIT_DATA_START                                   .\out\init.o
+INIT_DATA_VALUES                                  .\out\init.o
+SysTick_Handler                                   .\out\init.o
+Vectors                                           .\out\init.o
+clock_init                                        .\out\init.o
+init                                              .\out\init.o
+ledCfg                                            .\out\led.o
+                                                  .\out\main.o
+ledOff                                            .\out\led.o
+                                                  .\out\main.o
+ledOn                                             .\out\led.o
+                                                  .\out\main.o
+main                                              .\out\main.o
+                                                  .\out\init.o
+start                                             .\out\init.o
+uartCfg                                           .\out\uart.o
+                                                  .\out\main.o
+uartGetRxData                                     .\out\uart.o
+uartGetRxDataAvail                                .\out\uart.o
+uartGetc                                          .\out\uart.o
+uartPutDec                                        .\out\uart.o
+uartPutHex                                        .\out\uart.o
+uartPutc                                          .\out\uart.o
+uartPuts                                          .\out\uart.o
+                                                  .\out\main.o
