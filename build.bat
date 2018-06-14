@@ -1,3 +1,5 @@
+set TL_PATH=C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\bin
+set PATH=%TL_PATH%;%PATH%
 arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -g -c init.c -o .\out\init.o
 arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -I. -g -c .\driver\led.c -o .\out\led.o
 arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -I. -g -c .\driver\uart.c -o .\out\uart.o
